@@ -10,6 +10,12 @@
 
 PlayState = Class{__includes = BaseState}
 
+-- setting medal image variables
+local BRONZE_MEDAL_IMAGE = love.graphics.newImage('bronze.png')
+local SILVER_MEDAL_IMAGE = love.graphics.newImage('silver.png')
+local GOLD_MEDAL_IMAGE = love.graphics.newImage('gold.png')
+local MEDAL_IMAGE = nil
+
 PIPE_SPEED = 60
 PIPE_WIDTH = 70
 PIPE_HEIGHT = 288
@@ -110,8 +116,24 @@ function PlayState:render()
         pair:render()
     end
 
+    -- set medal according to score
+    if self.score == 10 then
+        MEDAL_IMAGE = BRONZE_MEDAL_IMAGE
+    end
+    if self.score == 15 then
+        MEDAL_IMAGE = SILVER_MEDAL_IMAGE
+    end
+    if self.score == 20 then
+        MEDAL_IMAGE = GOLD_MEDAL_IMAGE
+    end
+
+    -- show medal on display
+    if MEDAL_IMAGE then
+        love.graphics.draw(MEDAL_IMAGE, 8, 8)
+    end
+
     love.graphics.setFont(flappyFont)
-    love.graphics.print('Score: ' .. tostring(self.score), 8, 8)
+    love.graphics.print('Score: ' .. tostring(self.score), 28, 8)    
 
     self.bird:render()
 end
