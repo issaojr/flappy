@@ -27,9 +27,9 @@ function PipePair:init(y)
     -- instantiate two pipes that belong to this pair
     self.pipes = {
         ['upper'] = Pipe('top', self.y),
-        -- GAP_HEIGHT was replaced by math.random(75,150) in order to randomize
+        -- GAP_HEIGHT was replaced by math.random(75,125) in order to randomize
         -- gap size between pipes
-        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + math.random(75,150))
+        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + math.random(75, 125))
     }
 
     -- whether this pipe pair is ready to be removed from the scene
