@@ -57,10 +57,15 @@ local backgroundScroll = 0
 local ground = love.graphics.newImage('ground.png')
 local groundScroll = 0
 
+-- pause icon
+local pauseImage = love.graphics.newImage('pause.png')
+
 local BACKGROUND_SCROLL_SPEED = 30
 local GROUND_SCROLL_SPEED = 60
 
 local BACKGROUND_LOOPING_POINT = 413
+
+local scrolling = true
 
 function love.load()
     -- initialize our nearest-neighbor filter
@@ -87,7 +92,10 @@ function love.load()
         ['score'] = love.audio.newSource('score.wav', 'static'),
 
         -- https://freesound.org/people/xsgianni/sounds/388079/
-        ['music'] = love.audio.newSource('marios_way.mp3', 'static')
+        ['music'] = love.audio.newSource('marios_way.mp3', 'static'),
+
+        -- pause sound
+        ['pause'] = love.audio.newSource('pause.wav', 'static')
     }
 
     -- kick off music
@@ -154,11 +162,26 @@ function love.mouse.wasPressed(button)
 end
 
 function love.update(dt)
-    -- scroll our background and ground, looping back to 0 after a certain amount
-    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
-    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+    -- scrolling variable is set to false when game is paused. Otherwise it runs normally
+    if scrolling then
+        love.audio.play(sounds['music'])
+       
+        -- scroll our background and ground, looping back to 0 after a certain amount
+        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
+        groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
-    gStateMachine:update(dt)
+        gStateMachine:update(dt)
+    else
+        -- music stops when scrolling is set to false
+        love.audio.pause(sounds['music'])
+    end
+
+    -- pause key function
+    if love.keyboard.wasPressed('p') or love.keyboard.wasPressed('P') then
+        scrolling = not scrolling
+        love.audio.play(sounds['pause'])
+    end
+
 
     love.keyboard.keysPressed = {}
     love.mouse.buttonsPressed = {}
@@ -170,6 +193,12 @@ function love.draw()
     love.graphics.draw(background, -backgroundScroll, 0)
     gStateMachine:render()
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
+
+    -- when game is paused, scrolling variable is set to false and a pause icon
+    -- is shown on display
+    if not scrolling then      
+        love.graphics.draw(pauseImage,VIRTUAL_WIDTH/2 - 28, VIRTUAL_HEIGHT/2 - 28)
+    end
 
     push:finish()
 end

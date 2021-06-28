@@ -116,15 +116,15 @@ function PlayState:render()
         pair:render()
     end
 
-    -- set medal according to score
-    if self.score == 10 then
-        MEDAL_IMAGE = BRONZE_MEDAL_IMAGE
-    end
-    if self.score == 15 then
-        MEDAL_IMAGE = SILVER_MEDAL_IMAGE
-    end
-    if self.score == 20 then
+    -- set medal according to score    
+    if self.score >= 20 then
         MEDAL_IMAGE = GOLD_MEDAL_IMAGE
+    elseif self.score >= 15 then
+        MEDAL_IMAGE = SILVER_MEDAL_IMAGE
+    elseif self.score >= 10 then
+        MEDAL_IMAGE = BRONZE_MEDAL_IMAGE
+    else
+        MEDAL_IMAGE = nil
     end
 
     -- show medal on display
